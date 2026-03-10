@@ -1,0 +1,1554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="FreeToolsHub - glossy, professional tools in a single-page scroll website." />
+  <meta name="robots" content="index,follow" />
+  <title>FreeToolsHub | Single Page Tools Panel</title>
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap");
+
+    :root {
+      --bg: #f4f6fb;
+      --surface: #ffffff;
+      --surface-glass: rgba(255, 255, 255, 0.78);
+      --primary: #1d4ed8;
+      --primary-dark: #1e3a8a;
+      --accent: #f97316;
+      --accent-dark: #c2410c;
+      --text: #0f172a;
+      --muted: #475569;
+      --border: #d7e2f1;
+      --shadow: 0 18px 40px rgba(15, 23, 42, 0.12);
+      --radius: 18px;
+      --radius-sm: 12px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: "Poppins", "Trebuchet MS", sans-serif;
+      background: radial-gradient(circle at top left, #edf2ff 0%, var(--bg) 40%);
+      color: var(--text);
+      line-height: 1.6;
+      position: relative;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    body::before,
+    body::after {
+      content: "";
+      position: fixed;
+      width: 420px;
+      height: 420px;
+      border-radius: 50%;
+      opacity: 0.45;
+      z-index: -1;
+      animation: floatBlob 16s ease-in-out infinite;
+    }
+
+    body::before {
+      background: radial-gradient(circle, rgba(29, 78, 216, 0.35), transparent 70%);
+      top: -140px;
+      left: -120px;
+    }
+
+    body::after {
+      background: radial-gradient(circle, rgba(249, 115, 22, 0.35), transparent 70%);
+      bottom: -160px;
+      right: -120px;
+      animation-delay: 2s;
+    }
+
+    body.dark {
+      --bg: #0b1020;
+      --surface: #0f172a;
+      --surface-glass: rgba(15, 23, 42, 0.8);
+      --primary: #38bdf8;
+      --primary-dark: #0ea5e9;
+      --accent: #fbbf24;
+      --accent-dark: #f59e0b;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --border: #1e293b;
+      --shadow: 0 20px 48px rgba(2, 6, 23, 0.6);
+      background: radial-gradient(circle at top left, #1e293b 0%, #0b1020 45%);
+    }
+
+    .container {
+      width: min(1160px, 92%);
+      margin: 0 auto;
+    }
+
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: var(--surface-glass);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(215, 226, 241, 0.8);
+    }
+
+    .nav-wrap {
+      min-height: 76px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .brand {
+      text-decoration: none;
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--text);
+      letter-spacing: 0.2px;
+    }
+
+    .main-nav {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .main-nav a {
+      text-decoration: none;
+      color: var(--muted);
+      font-weight: 600;
+      transition: color 0.2s ease;
+    }
+
+    .main-nav a:hover {
+      color: var(--primary);
+    }
+
+    .theme-toggle {
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: transform 0.2s ease;
+    }
+
+    .theme-toggle:hover {
+      transform: translateY(-1px);
+    }
+
+    .menu-btn {
+      display: none;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      border-radius: 10px;
+      padding: 7px 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .hero {
+      padding: 86px 0 60px;
+    }
+
+    .hero-content {
+      text-align: center;
+      animation: fadeUp 0.8s ease;
+    }
+
+    .hero h1 {
+      font-size: clamp(2.1rem, 3.5vw, 3.2rem);
+      margin-bottom: 12px;
+    }
+
+    .hero p {
+      max-width: 720px;
+      margin: 0 auto 24px;
+      color: var(--muted);
+    }
+
+    .hero-actions {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .section {
+      padding: 28px 0 64px;
+    }
+
+    .section h2 {
+      margin-bottom: 16px;
+      font-size: clamp(1.4rem, 2.3vw, 2rem);
+    }
+
+    .alt-bg {
+      background: rgba(255, 255, 255, 0.65);
+      border-top: 1px solid #edf2f8;
+      border-bottom: 1px solid #edf2f8;
+    }
+
+    .category-grid,
+    .tools-grid,
+    .panel-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 18px;
+    }
+
+    .card,
+    .tool-card,
+    .tool-box,
+    .panel-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .card {
+      padding: 22px;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .panel-card {
+      padding: 18px;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .panel-card::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(130deg, rgba(255, 255, 255, 0.6), transparent 65%);
+      opacity: 0.7;
+      pointer-events: none;
+    }
+
+    .panel-card .panel-number {
+      width: 36px;
+      height: 36px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      background: rgba(29, 78, 216, 0.12);
+      color: var(--primary);
+      font-weight: 700;
+    }
+
+    .tool-card {
+      padding: 20px;
+      color: inherit;
+      text-decoration: none;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .tool-card::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.6), transparent 60%);
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      pointer-events: none;
+    }
+
+    .tool-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 38px rgba(15, 23, 42, 0.16);
+    }
+
+    .tool-card:hover::after {
+      opacity: 1;
+    }
+
+    .tool-card .icon {
+      display: inline-flex;
+      width: 34px;
+      height: 34px;
+      align-items: center;
+      justify-content: center;
+      border-radius: 12px;
+      background: rgba(29, 78, 216, 0.12);
+      margin-bottom: 10px;
+    }
+
+    .tool-card .icon svg {
+      width: 20px;
+      height: 20px;
+      stroke: var(--primary);
+    }
+
+    .tool-card .tool-number {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: rgba(249, 115, 22, 0.15);
+      color: var(--accent-dark);
+      display: grid;
+      place-items: center;
+      font-weight: 700;
+      font-size: 0.85rem;
+    }
+
+    .tool-card p {
+      color: var(--muted);
+      margin-top: 6px;
+    }
+
+    .tool-layout {
+      padding: 56px 0 72px;
+    }
+
+    .tool-box {
+      padding: 26px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .tool-box::before {
+      content: "";
+      position: absolute;
+      top: -60px;
+      right: -60px;
+      width: 160px;
+      height: 160px;
+      background: radial-gradient(circle, rgba(29, 78, 216, 0.2), transparent 70%);
+    }
+
+    .tool-box h3 {
+      margin-bottom: 6px;
+    }
+
+    .form-group {
+      margin-bottom: 14px;
+    }
+
+    .inline-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .pill-row label {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--muted);
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    input,
+    textarea,
+    select,
+    button {
+      font: inherit;
+    }
+
+    input,
+    textarea,
+    select {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      background: #fff;
+      transition: border 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+      outline: none;
+      border-color: rgba(29, 78, 216, 0.5);
+      box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.12);
+    }
+
+    .btn {
+      border: 0;
+      background: linear-gradient(120deg, var(--primary), var(--primary-dark));
+      color: #fff;
+      padding: 12px 18px;
+      border-radius: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      box-shadow: 0 10px 20px rgba(29, 78, 216, 0.25);
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .btn.secondary {
+      background: linear-gradient(120deg, var(--accent), var(--accent-dark));
+      box-shadow: 0 10px 20px rgba(249, 115, 22, 0.25);
+    }
+
+    .copy-btn {
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--text);
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .result {
+      margin-top: 16px;
+      padding: 14px;
+      border: 1px dashed #c8d6f0;
+      border-radius: 12px;
+      background: #f7f9ff;
+      min-height: 56px;
+      white-space: pre-wrap;
+    }
+
+    body.dark .result {
+      background: #0b1222;
+      border-color: #1e293b;
+    }
+
+    .check-row {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin: 10px 0 2px;
+    }
+
+    .check-row label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--muted);
+    }
+
+    .ad-slot {
+      border: 2px dashed #b7c9da;
+      border-radius: 16px;
+      padding: 22px;
+      text-align: center;
+      color: #5b738c;
+      background: #f8fbff;
+    }
+
+    body.dark .ad-slot {
+      background: #0f172a;
+      border-color: #1e293b;
+      color: #94a3b8;
+    }
+
+    .serp-preview {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      background: #fff;
+      box-shadow: var(--shadow);
+    }
+
+    body.dark .serp-preview {
+      background: #0f172a;
+      border-color: #1e293b;
+    }
+
+    .serp-preview .serp-title {
+      color: #1d4ed8;
+      font-weight: 700;
+    }
+
+    .serp-preview .serp-url {
+      color: #047857;
+      font-size: 0.9rem;
+    }
+
+    .serp-preview .serp-desc {
+      color: var(--muted);
+      margin-top: 6px;
+    }
+
+    .site-footer {
+      border-top: 1px solid var(--border);
+      background: #eef3ff;
+      padding: 34px 0 18px;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 18px;
+      margin-bottom: 10px;
+    }
+
+    .site-footer a {
+      display: block;
+      text-decoration: none;
+      color: var(--muted);
+      margin: 4px 0;
+    }
+
+    .footer-credit {
+      text-align: center;
+      font-weight: 600;
+      color: var(--text);
+      margin-top: 6px;
+    }
+
+    .copyright {
+      text-align: center;
+      font-size: 0.95rem;
+      color: #64748b;
+      border-top: 1px solid #dbe5ef;
+      padding-top: 10px;
+    }
+
+    @keyframes fadeUp {
+      from {
+        transform: translateY(14px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes floatBlob {
+      0%, 100% { transform: translateY(0) translateX(0) scale(1); }
+      50% { transform: translateY(20px) translateX(30px) scale(1.05); }
+    }
+
+    @media (max-width: 900px) {
+      .menu-btn {
+        display: inline-block;
+      }
+
+      .main-nav {
+        display: none;
+      }
+
+      .inline-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container nav-wrap">
+      <a class="brand" href="#home">FreeToolsHub</a>
+      <nav class="main-nav" aria-label="Main Navigation">
+        <a href="#home">Home</a>
+        <a href="#traffic-tools">Search Traffic Tools</a>
+        <a href="#all-tools">All Tools</a>
+      </nav>
+      <button class="theme-toggle" id="themeToggle" type="button">Dark Mode</button>
+    </div>
+  </header>
+
+  <main id="home">
+    <section class="hero">
+      <div class="container hero-content">
+        <h1>Glossy, Fast, and Professional Tools</h1>
+        <p>All tools are upgraded, responsive, and built for creators, marketers, and everyday users.</p>
+        <div class="hero-actions">
+          <a class="btn" href="#all-tools">Explore All Tools</a>
+          <a class="btn secondary" href="#traffic-tools">Search Traffic Tools</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section alt-bg">
+      <div class="container">
+        <h2>Tool Categories</h2>
+        <div class="category-grid">
+          <div class="card">Text Tools</div>
+          <div class="card">Generator Tools</div>
+          <div class="card">Social Media Tools</div>
+          <div class="card">Search Traffic Tools</div>
+          <div class="card">Utility Tools</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="traffic-tools">
+      <div class="container">
+        <h2>Search Traffic Tools</h2>
+        <div class="panel-grid">
+          <div class="panel-card"><div class="panel-number">01</div><div><h3>Keyword Ideas</h3><p>Generate keyword ideas with intent, audience, and location support.</p></div></div>
+          <div class="panel-card"><div class="panel-number">02</div><div><h3>Meta Tags Generator</h3><p>Create SEO-ready meta titles and descriptions that fit length limits.</p></div></div>
+          <div class="panel-card"><div class="panel-number">03</div><div><h3>UTM Builder</h3><p>Build tracked links for campaigns in seconds.</p></div></div>
+          <div class="panel-card"><div class="panel-number">04</div><div><h3>URL Slug Generator</h3><p>Turn titles into clean, SEO-friendly URLs.</p></div></div>
+          <div class="panel-card"><div class="panel-number">05</div><div><h3>SERP Preview</h3><p>Preview how your page will look on search engines.</p></div></div>
+          <div class="panel-card"><div class="panel-number">06</div><div><h3>Robots.txt Generator</h3><p>Create a clean robots.txt file with allow/disallow rules.</p></div></div>
+          <div class="panel-card"><div class="panel-number">07</div><div><h3>Sitemap Generator</h3><p>Generate XML sitemaps quickly for search indexing.</p></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="all-tools">
+      <div class="container">
+        <div class="tool-box">
+          <h2>Copy All Tools Links</h2>
+          <p>One click to get the full list of tool links for quick sharing.</p>
+          <button class="btn" id="copyLinksBtn">Copy All Links</button>
+          <div class="result" id="allLinksResult">Tool links will appear here.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <h2>All Tools (Single Page Scroll)</h2>
+
+        <article class="tool-box" id="tool-word-counter">
+          <h3>Word Counter</h3>
+          <p>Count words, characters, and estimated reading time.</p>
+          <div class="form-group">
+            <label for="wcInput">Your Text</label>
+            <textarea id="wcInput" rows="6" placeholder="Type or paste your text..."></textarea>
+          </div>
+          <button class="btn" id="wcBtn">Count Words</button>
+          <div class="result" id="wcResult">Results will appear here.</div>
+        </article>
+
+        <article class="tool-box" id="tool-password-generator">
+          <h3>Password Generator</h3>
+          <p>Create secure passwords with custom options.</p>
+          <div class="form-group">
+            <label for="pwLength">Password Length</label>
+            <input id="pwLength" type="number" min="6" max="64" value="12" />
+          </div>
+          <div class="check-row">
+            <label><input id="pwUpper" type="checkbox" checked /> Uppercase</label>
+            <label><input id="pwNumber" type="checkbox" checked /> Numbers</label>
+            <label><input id="pwSymbol" type="checkbox" checked /> Symbols</label>
+          </div>
+          <button class="btn" id="pwBtn">Generate Password</button>
+          <div class="result" id="pwResult">Password result will appear here.</div>
+        </article>
+
+        <article class="tool-box" id="tool-username-generator">
+          <h3>Username Generator</h3>
+          <p>Customize usernames with letters only, numbers only, or mixed style.</p>
+          <div class="inline-grid">
+            <div class="form-group">
+              <label for="unSeed">Name or Brand</label>
+              <input id="unSeed" type="text" placeholder="yourname" />
+            </div>
+            <div class="form-group">
+              <label for="unKeyword">Keyword</label>
+              <input id="unKeyword" type="text" placeholder="studio" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Username Style</label>
+            <div class="pill-row">
+              <label><input type="radio" name="unMode" value="letters" checked /> Letters Only</label>
+              <label><input type="radio" name="unMode" value="numbers" /> Numbers Only</label>
+              <label><input type="radio" name="unMode" value="mix" /> Mixed</label>
+            </div>
+          </div>
+          <div class="inline-grid">
+            <div class="form-group">
+              <label for="unLength">Username Length</label>
+              <input id="unLength" type="number" min="4" max="24" value="10" />
+            </div>
+            <div class="form-group">
+              <label for="unCount">How Many Results</label>
+              <input id="unCount" type="number" min="1" max="20" value="6" />
+            </div>
+          </div>
+          <div class="check-row">
+            <label><input id="unUpper" type="checkbox" /> Include Uppercase</label>
+            <label for="unSeparator">Separator</label>
+            <select id="unSeparator">
+              <option value="none">None</option>
+              <option value="_">Underscore</option>
+              <option value=".">Dot</option>
+            </select>
+          </div>
+          <div class="check-row">
+            <button class="btn" id="unBtn">Generate Usernames</button>
+            <button class="copy-btn" id="unCopy" type="button">Copy Results</button>
+          </div>
+          <div class="result" id="unResult">Username results will appear here.</div>
+        </article>
+
+        <article class="tool-box" id="tool-instagram-bio">
+          <h3>Instagram Bio Generator</h3>
+          <p>Fresh bio ideas with tone, niche, and call-to-action options.</p>
+          <div class="inline-grid">
+            <div class="form-group">
+              <label for="igName">Name or Brand</label>
+              <input id="igName" type="text" placeholder="Studio Name" />
+            </div>
+            <div class="form-group">
+              <label for="igNiche">Niche</label>
+              <input id="igNiche" type="text" placeholder="Fitness Coach" />
+            </div>
+          </div>
+          <div class="inline-grid">
+            <div class="form-group">
+              <label for="igTone">Tone</label>
+              <select id="igTone">
+                <option value="clean">Clean</option>
+                <option value="bold">Bold</option>
+                <option value="friendly">Friendly</option>
+                <option value="minimal">Minimal</option>
+                <option value="luxury">Luxury</option>
+                <option value="fun">Fun</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="igCount">How Many Bios</label>
+              <input id="igCount" type="number" min="1" max="10" value="4" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="igFocus">Main Focus Line</label>
+            <input id="igFocus" type="text" placeholder="Helping you stay consistent" />
+          </div>
+          <div class="form-group">
+            <label for="igCta">Call To Action</label>
+            <select id="igCta">
+              <option value="Follow for updates">Follow for updates</option>
+              <option value="DM for collabs">DM for collabs</option>
+              <option value="Check the latest tips">Check the latest tips</option>
+              <option value="Book your session">Book your session</option>
+            </select>
+          </div>
+          <div class="check-row">
+            <button class="btn" id="igBtn">Generate Bios</button>
+            <button class="copy-btn" id="igCopy" type="button">Copy Bios</button>
+          </div>
+          <div class="result" id="igResult">Bio results will appear here.</div>
+        </article>
+
+        <article class="tool-box" id="tool-hashtag">
+          <h3>Hashtag Generator</h3>
+          <p>Upgrade your hashtags with niche, broad, or mixed sets.</p>
+          <div class="inline-grid">
+            <div class="form-group">
+              <label for="htTopic">Main Topic</label>
+              <input id="htTopic" type="text" placeholder="travel photography" />
+            </div>
+            <div class="form-group">
+              <label for="htKeywords">Extra Keywords</label>
+              <input id="htKeywords" type="text" placeholder="adventure, landscape" />
+            </div>
+          </div>
+          <div class="inline-grid">
+            <div class="form-group">
+              <label for="htCount">Number of Hashtags</label>
+              <input id="htCount" type="number" value="18" min="5" max="40" />
+            </div>
+            <div class="form-group">
+              <label for="htStyle">Hashtag Style</label>
+              <select id="htStyle">
+                <option value="mixed">Mixed</option>
+                <option value="niche">Niche Focus</option>
+                <option value="broad">Broad Reach</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="htBrand">Branded Tag (Optional)</label>
+            <input id="htBrand" type="text" placeholder="YourBrand" />
+          </div>
+          <div class="check-row">
+            <button class="btn" id="htBtn">Generate Hashtags</button>
+            <button class="copy-btn" id="htCopy" type="button">Copy Hashtags</button>
+          </div>
+          <div class="result" id="htResult">Hashtag result will appear here.</div>
+        </article>
+
+        <article class="tool-box" id="tool-keyword-ideas">
+          <h3>Keyword Ideas</h3>
+          <p>Create keyword ideas for better search traffic.</p>
+          <div class="inline-grid">
+            <div class="form-group">
+              <label for="kwSeed">Seed Keyword</label>
+              <input id="kwSeed" type="text" placeholder="digital marketing" />
+            </div>
+            <div class="form-group">
+              <label for="kwCount">How Many Ideas</label>
+              <input id="kwCount" type="number" min="5" max="25" value="12" />
+            </div>
+          </div>
+          <div class="inline-grid">
+            <div class="form-group">
+              <label for="kwIntent">Search Intent</label>
+              <select id="kwIntent">
+                <option value="">Any Intent</option>
+                <option value="for beginners">For Beginners</option>
+                <option value="near me">Near Me</option>
+                <option value="best">Best</option>
+                <option value="free">Free</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="kwAudience">Audience</label>
+              <input id="kwAudience" type="text" placeholder="students" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="kwLocation">Location</label>
+            <input id="kwLocation" type="text" placeholder="Delhi" />
+          </div>
+          <div class="check-row">
+            <button class="btn" id="kwBtn">Generate Keywords</button>
+            <button class="copy-btn" id="kwCopy" type="button">Copy Keywords</button>
+          </div>
+          <div class="result" id="kwResult">Keyword ideas will appear here.</div>
+        </article>
+
+        <article class="tool-box" id="tool-meta-tags">
+          <h3>Meta Tags Generator</h3>
+          <p>Create SEO-ready meta title and description.</p>
+          <div class="inline-grid">
+            <div class="form-group">
+              <label for="mtKeyword">Primary Keyword</label>
+              <input id="mtKeyword" type="text" placeholder="seo tips" />
+            </div>
+            <div class="form-group">
+              <label for="mtBrand">Brand Name</label>
+              <input id="mtBrand" type="text" placeholder="FreeToolsHub" />
+            </div>
+          </div>
+          <div class="inline-grid">
+            <div class="form-group">
+              <label for="mtPage">Page Type</label>
+              <select id="mtPage">
+                <option value="Guide">Guide</option>
+                <option value="Checklist">Checklist</option>
+                <option value="Tutorial">Tutorial</option>
+                <option value="Overview">Overview</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="mtTone">Tone</label>
+              <select id="mtTone">
+                <option value="Professional">Professional</option>
+                <option value="Friendly">Friendly</option>
+                <option value="Direct">Direct</option>
+              </select>
+            </div>
+          </div>
+          <div class="check-row">
+            <button class="btn" id="mtBtn">Generate Meta Tags</button>
+            <button class="copy-btn" id="mtCopy" type="button">Copy Meta Tags</button>
+          </div>
+          <div class="result" id="mtResult">Meta title and description will appear here.</div>
+        </article>
+
+        <article class="tool-box" id="tool-utm">
+          <h3>UTM Builder</h3>
+          <p>Create campaign tracking links quickly.</p>
+          <div class="form-group">
+            <label for="utmUrl">Website URL</label>
+            <input id="utmUrl" type="text" placeholder="https://example.com" />
+          </div>
+          <div class="inline-grid">
+            <div class="form-group"><label for="utmSource">Source</label><input id="utmSource" type="text" placeholder="instagram" /></div>
+            <div class="form-group"><label for="utmMedium">Medium</label><input id="utmMedium" type="text" placeholder="social" /></div>
+          </div>
+          <div class="inline-grid">
+            <div class="form-group"><label for="utmCampaign">Campaign</label><input id="utmCampaign" type="text" placeholder="launch" /></div>
+            <div class="form-group"><label for="utmTerm">Term</label><input id="utmTerm" type="text" placeholder="keyword" /></div>
+          </div>
+          <div class="form-group"><label for="utmContent">Content</label><input id="utmContent" type="text" placeholder="banner" /></div>
+          <div class="check-row">
+            <button class="btn" id="utmBtn">Build UTM Link</button>
+            <button class="copy-btn" id="utmCopy" type="button">Copy Link</button>
+          </div>
+          <div class="result" id="utmResult">Your UTM link will appear here.</div>
+        </article>
+
+        <article class="tool-box" id="tool-slug">
+          <h3>URL Slug Generator</h3>
+          <p>Convert titles into clean, SEO-friendly URL slugs.</p>
+          <div class="form-group">
+            <label for="slugInput">Page Title</label>
+            <input id="slugInput" type="text" placeholder="Best SEO tips for beginners" />
+          </div>
+          <div class="form-group">
+            <label for="slugSeparator">Separator</label>
+            <select id="slugSeparator">
+              <option value="-">Dash (-)</option>
+              <option value="_">Underscore (_)</option>
+            </select>
+          </div>
+          <div class="check-row">
+            <button class="btn" id="slugBtn">Generate Slug</button>
+            <button class="copy-btn" id="slugCopy" type="button">Copy Slug</button>
+          </div>
+          <div class="result" id="slugResult">Slug result will appear here.</div>
+        </article>
+
+        <article class="tool-box" id="tool-serp">
+          <h3>SERP Preview</h3>
+          <p>Preview how your page could look on search results.</p>
+          <div class="form-group"><label for="serpTitle">Meta Title</label><input id="serpTitle" type="text" placeholder="Best SEO Tools for 2026" /></div>
+          <div class="form-group"><label for="serpUrl">URL</label><input id="serpUrl" type="text" placeholder="www.example.com/seo-tools" /></div>
+          <div class="form-group"><label for="serpDesc">Meta Description</label><textarea id="serpDesc" rows="4" placeholder="Write a short description for search results."></textarea></div>
+          <div class="serp-preview">
+            <div class="serp-title" id="serpPreviewTitle">Your Page Title</div>
+            <div class="serp-url" id="serpPreviewUrl">www.example.com/page</div>
+            <div class="serp-desc" id="serpPreviewDesc">Your meta description will show here.</div>
+          </div>
+        </article>
+
+        <article class="tool-box" id="tool-robots">
+          <h3>Robots.txt Generator</h3>
+          <p>Create a clean robots.txt file for your website.</p>
+          <div class="inline-grid">
+            <div class="form-group"><label for="rbSite">Website URL</label><input id="rbSite" type="text" placeholder="https://example.com" /></div>
+            <div class="form-group"><label for="rbUserAgent">User Agent</label><input id="rbUserAgent" type="text" placeholder="*" /></div>
+          </div>
+          <div class="inline-grid">
+            <div class="form-group"><label for="rbAllow">Allow Paths (one per line)</label><textarea id="rbAllow" rows="4" placeholder="/blog&#10;/assets"></textarea></div>
+            <div class="form-group"><label for="rbDisallow">Disallow Paths (one per line)</label><textarea id="rbDisallow" rows="4" placeholder="/admin&#10;/checkout"></textarea></div>
+          </div>
+          <div class="inline-grid">
+            <div class="form-group"><label for="rbDelay">Crawl Delay (seconds)</label><input id="rbDelay" type="number" min="0" value="0" /></div>
+            <div class="form-group"><label for="rbSitemap">Sitemap URL (optional)</label><input id="rbSitemap" type="text" placeholder="https://example.com/sitemap.xml" /></div>
+          </div>
+          <div class="check-row">
+            <button class="btn" id="rbBtn">Generate Robots.txt</button>
+            <button class="copy-btn" id="rbCopy" type="button">Copy Robots.txt</button>
+          </div>
+          <div class="result" id="rbResult">Robots.txt will appear here.</div>
+        </article>
+
+        <article class="tool-box" id="tool-sitemap">
+          <h3>Sitemap Generator</h3>
+          <p>Generate an XML sitemap for your website pages.</p>
+          <div class="inline-grid">
+            <div class="form-group"><label for="smBase">Base URL</label><input id="smBase" type="text" placeholder="https://example.com" /></div>
+            <div class="form-group"><label for="smLastmod">Last Modified Date</label><input id="smLastmod" type="date" /></div>
+          </div>
+          <div class="form-group"><label for="smUrls">Page URLs or Paths (one per line)</label><textarea id="smUrls" rows="6" placeholder="/&#10;/about&#10;/blog&#10;https://example.com/contact"></textarea></div>
+          <div class="inline-grid">
+            <div class="form-group">
+              <label for="smChange">Change Frequency</label>
+              <select id="smChange">
+                <option value="weekly">Weekly</option>
+                <option value="daily">Daily</option>
+                <option value="monthly">Monthly</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="smPriority">Priority</label>
+              <select id="smPriority">
+                <option value="0.8">0.8</option>
+                <option value="0.6">0.6</option>
+                <option value="1.0">1.0</option>
+              </select>
+            </div>
+          </div>
+          <div class="check-row">
+            <button class="btn" id="smBtn">Generate Sitemap</button>
+            <button class="copy-btn" id="smCopy" type="button">Copy Sitemap</button>
+          </div>
+          <div class="result" id="smResult">Sitemap XML will appear here.</div>
+        </article>
+
+        <article class="tool-box" id="tool-qr">
+          <h3>QR Code Generator</h3>
+          <p>Generate QR codes from any text or URL.</p>
+          <div class="form-group"><label for="qrInput">Text or URL</label><input id="qrInput" type="text" placeholder="https://example.com" /></div>
+          <button class="btn" id="qrBtn">Generate QR Code</button>
+          <div class="result" id="qrResult">QR code will appear here.</div>
+        </article>
+
+        <article class="tool-box" id="tool-random">
+          <h3>Random Number Generator</h3>
+          <p>Generate a random number within your range.</p>
+          <div class="inline-grid">
+            <div class="form-group"><label for="rnMin">Minimum</label><input id="rnMin" type="number" value="1" /></div>
+            <div class="form-group"><label for="rnMax">Maximum</label><input id="rnMax" type="number" value="100" /></div>
+          </div>
+          <button class="btn" id="rnBtn">Generate Number</button>
+          <div class="result" id="rnResult">Random number will appear here.</div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="ad-slot">Ad Space (Google AdSense Placeholder)</div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div>
+        <h4>FreeToolsHub</h4>
+        <p>Modern tools that work perfectly on phone, tablet, and desktop.</p>
+      </div>
+      <div>
+        <h4>Links</h4>
+        <a href="#home">Home</a>
+        <a href="#all-tools">Tools</a>
+      </div>
+    </div>
+    <p class="footer-credit">Design By (SHAMIM MIR from J&K ut)</p>
+    <p class="copyright">&copy; 2026 FreeToolsHub. All rights reserved.</p>
+  </footer>
+
+  <script>
+    const byId = (id) => document.getElementById(id);
+    const randomPick = (arr) => arr[Math.floor(Math.random() * arr.length)];
+    const unique = (arr) => [...new Set(arr.filter(Boolean))];
+    const slugify = (text, sep = "-") =>
+      text.toLowerCase().replace(/[^a-z0-9\s-]/g, "").trim().replace(/\s+/g, sep);
+
+    const themeToggle = byId("themeToggle");
+    if (themeToggle) {
+      const savedTheme = localStorage.getItem("fth-theme");
+      if (savedTheme === "dark") {
+        document.body.classList.add("dark");
+        themeToggle.textContent = "Light Mode";
+      }
+      themeToggle.addEventListener("click", () => {
+        document.body.classList.toggle("dark");
+        const isDark = document.body.classList.contains("dark");
+        themeToggle.textContent = isDark ? "Light Mode" : "Dark Mode";
+        localStorage.setItem("fth-theme", isDark ? "dark" : "light");
+      });
+    }
+
+    const attachCopy = (btnId, resultId) => {
+      const btn = byId(btnId);
+      const result = byId(resultId);
+      if (!btn || !result) return;
+
+      btn.addEventListener("click", () => {
+        const text = result.textContent.trim();
+        if (!text) return;
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).catch(() => {});
+        } else {
+          const temp = document.createElement("textarea");
+          temp.value = text;
+          document.body.appendChild(temp);
+          temp.select();
+          document.execCommand("copy");
+          document.body.removeChild(temp);
+        }
+      });
+    };
+
+    const copyAllLinks = () => {
+      const btn = byId("copyLinksBtn");
+      const result = byId("allLinksResult");
+      if (!btn || !result) return;
+
+      const links = [
+        "#tool-word-counter",
+        "#tool-password-generator",
+        "#tool-username-generator",
+        "#tool-instagram-bio",
+        "#tool-hashtag",
+        "#tool-keyword-ideas",
+        "#tool-meta-tags",
+        "#tool-utm",
+        "#tool-slug",
+        "#tool-serp",
+        "#tool-robots",
+        "#tool-sitemap",
+        "#tool-qr",
+        "#tool-random",
+      ].map((hash) => new URL(hash, window.location.href).toString());
+
+      result.textContent = links.join("\n");
+      attachCopy("copyLinksBtn", "allLinksResult");
+    };
+
+    const wordCounter = () => {
+      const input = byId("wcInput");
+      const btn = byId("wcBtn");
+      const result = byId("wcResult");
+      if (!input || !btn || !result) return;
+      btn.addEventListener("click", () => {
+        const text = input.value.trim();
+        const chars = text.length;
+        const words = text ? text.split(/\s+/).length : 0;
+        const readingTime = Math.max(1, Math.ceil(words / 200));
+        result.textContent = `Words: ${words}\nCharacters: ${chars}\nEstimated Reading Time: ${readingTime} min`;
+      });
+    };
+
+    const passwordGenerator = () => {
+      const length = byId("pwLength");
+      const up = byId("pwUpper");
+      const num = byId("pwNumber");
+      const sym = byId("pwSymbol");
+      const btn = byId("pwBtn");
+      const result = byId("pwResult");
+      if (!length || !btn || !result || !up || !num || !sym) return;
+
+      btn.addEventListener("click", () => {
+        let chars = "abcdefghijklmnopqrstuvwxyz";
+        if (up.checked) chars += "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        if (num.checked) chars += "0123456789";
+        if (sym.checked) chars += "!@#$%^&*()_+-={}[]<>?";
+        const size = Math.min(64, Math.max(6, Number(length.value) || 12));
+        let out = "";
+        for (let i = 0; i < size; i += 1) out += chars[Math.floor(Math.random() * chars.length)];
+        result.textContent = out;
+      });
+    };
+
+    const usernameGenerator = () => {
+      const seed = byId("unSeed");
+      const keyword = byId("unKeyword");
+      const length = byId("unLength");
+      const count = byId("unCount");
+      const upper = byId("unUpper");
+      const separator = byId("unSeparator");
+      const btn = byId("unBtn");
+      const result = byId("unResult");
+      if (!seed || !keyword || !length || !count || !btn || !result || !upper || !separator) return;
+
+      btn.addEventListener("click", () => {
+        const mode = document.querySelector("input[name='unMode']:checked")?.value || "mix";
+        const letters = "abcdefghijklmnopqrstuvwxyz";
+        const numbers = "0123456789";
+        let chars = "";
+        if (mode === "letters") chars = letters + (upper.checked ? letters.toUpperCase() : "");
+        else if (mode === "numbers") chars = numbers;
+        else chars = letters + numbers + (upper.checked ? letters.toUpperCase() : "");
+
+        const total = Math.min(24, Math.max(4, Number(length.value) || 10));
+        const outCount = Math.min(20, Math.max(1, Number(count.value) || 6));
+        const sep = separator.value === "none" ? "" : separator.value;
+        const seedText = `${seed.value || ""} ${keyword.value || ""}`.trim();
+        const baseSeed = seedText.toLowerCase().replace(/[^a-z0-9]/g, "");
+
+        const results = new Set();
+        let attempts = 0;
+        while (results.size < outCount && attempts < 400) {
+          attempts += 1;
+          let built = "";
+          if (mode !== "numbers" && baseSeed) {
+            const seedCut = baseSeed.slice(0, Math.min(baseSeed.length, Math.max(3, total - 3)));
+            built = seedCut;
+          }
+          if (sep && built) built += sep;
+          while (built.length < total) built += chars[Math.floor(Math.random() * chars.length)];
+          results.add(built.slice(0, total));
+        }
+        result.textContent = Array.from(results).join("\n");
+      });
+
+      attachCopy("unCopy", "unResult");
+    };
+
+    const instaBioGenerator = () => {
+      const name = byId("igName");
+      const niche = byId("igNiche");
+      const tone = byId("igTone");
+      const focus = byId("igFocus");
+      const cta = byId("igCta");
+      const count = byId("igCount");
+      const btn = byId("igBtn");
+      const result = byId("igResult");
+      if (!name || !niche || !tone || !focus || !cta || !count || !btn || !result) return;
+
+      const templates = [
+        (d) => `${d.name} | ${d.niche}\n${d.focusLine}\n${d.ctaLine}`,
+        (d) => `${d.niche} creator with ${d.tone} energy\n${d.focusLine}\n${d.ctaLine}`,
+        (d) => `${d.name} - ${d.tone} ${d.niche}\n${d.focusLine}\n${d.ctaLine}`,
+        (d) => `${d.niche} + ${d.focusLine}\n${d.ctaLine}`,
+      ];
+
+      btn.addEventListener("click", () => {
+        const data = {
+          name: name.value.trim() || "Creator",
+          niche: niche.value.trim() || "Lifestyle",
+          tone: tone.value || "clean",
+          focusLine: focus.value.trim() || "Sharing tips and daily insights",
+          ctaLine: cta.value || "Follow for updates",
+        };
+        const total = Math.min(10, Math.max(1, Number(count.value) || 4));
+        const bios = new Set();
+        let attempts = 0;
+        while (bios.size < total && attempts < 200) {
+          attempts += 1;
+          bios.add(randomPick(templates)(data));
+        }
+        result.textContent = Array.from(bios).join("\n\n");
+      });
+
+      attachCopy("igCopy", "igResult");
+    };
+
+    const hashtagGenerator = () => {
+      const topic = byId("htTopic");
+      const keywords = byId("htKeywords");
+      const count = byId("htCount");
+      const style = byId("htStyle");
+      const brand = byId("htBrand");
+      const btn = byId("htBtn");
+      const result = byId("htResult");
+      if (!topic || !keywords || !count || !style || !brand || !btn || !result) return;
+
+      const themes = {
+        travel: ["travelgram", "wanderlust", "exploremore", "tripideas", "journey"],
+        fitness: ["fitlife", "workout", "gymtime", "healthgoals", "trainhard"],
+        food: ["foodie", "foodlovers", "tasty", "homecooking", "foodstories"],
+        fashion: ["styleguide", "outfitinspo", "streetstyle", "wardrobe", "trendset"],
+        tech: ["technews", "innovation", "digital", "startup", "futuretech"],
+        business: ["businesstips", "entrepreneur", "marketing", "growth", "strategy"],
+        art: ["artstudio", "creative", "artwork", "designlife", "illustration"],
+        music: ["musiclover", "soundtrack", "newmusic", "artistlife", "beats"],
+        photography: ["photography", "visualstory", "portrait", "shoton", "lenslife"],
+        beauty: ["skincare", "beautyroutine", "glowup", "makeuplover", "selfcare"],
+        education: ["learnmore", "studygram", "knowledge", "skills", "growthmindset"],
+        gaming: ["gaminglife", "gamers", "esports", "playhard", "streamer"],
+        lifestyle: ["lifestyle", "dailyinspo", "goodvibes", "mindful", "balance"],
+        finance: ["financialfreedom", "moneymoves", "investing", "wealth", "smartmoney"],
+      };
+
+      const buildTags = (baseWords, extraThemes, limit, mode) => {
+        const suffixes = ["tips", "daily", "life", "vibes", "goals", "hub", "studio", "community", "guide", "ideas"];
+        const prefixes = ["the", "my", "best", "top", "go", "get", "real"];
+
+        const base = [];
+        baseWords.forEach((word) => {
+          base.push(word);
+          suffixes.forEach((suf) => base.push(`${word}${suf}`));
+          prefixes.forEach((pre) => base.push(`${pre}${word}`));
+        });
+
+        const combined = [];
+        for (let i = 0; i < baseWords.length; i += 1) {
+          for (let j = i + 1; j < baseWords.length; j += 1) {
+            combined.push(`${baseWords[i]}${baseWords[j]}`);
+          }
+        }
+
+        let all = base.concat(combined, extraThemes);
+        if (mode === "niche") all = base.concat(combined);
+        if (mode === "broad") all = extraThemes.concat(baseWords);
+
+        return unique(all).filter((t) => t.length > 1).slice(0, limit).map((t) => `#${t}`);
+      };
+
+      btn.addEventListener("click", () => {
+        const text = `${topic.value || ""} ${keywords.value || ""}`.trim();
+        const words = (text.match(/[a-zA-Z0-9]+/g) || []).map((w) => w.toLowerCase());
+        const baseWords = unique(words).slice(0, 6);
+        const total = Math.min(40, Math.max(5, Number(count.value) || 15));
+        const mode = style.value || "mixed";
+
+        let extraThemes = [];
+        Object.keys(themes).forEach((key) => {
+          if (text.toLowerCase().includes(key)) extraThemes = extraThemes.concat(themes[key]);
+        });
+        if (!extraThemes.length) extraThemes = themes.lifestyle;
+
+        let tags = buildTags(baseWords.length ? baseWords : ["content"], extraThemes, total, mode);
+        const branded = brand.value.trim();
+        if (branded) tags.unshift(`#${slugify(branded, "")}`);
+        tags = unique(tags).slice(0, total);
+        result.textContent = tags.join(" ");
+      });
+
+      attachCopy("htCopy", "htResult");
+    };
+
+    const keywordIdeas = () => {
+      const seed = byId("kwSeed");
+      const intent = byId("kwIntent");
+      const audience = byId("kwAudience");
+      const location = byId("kwLocation");
+      const count = byId("kwCount");
+      const btn = byId("kwBtn");
+      const result = byId("kwResult");
+      if (!seed || !intent || !audience || !location || !count || !btn || !result) return;
+
+      const prefixes = ["best", "top", "how to", "guide", "near me", "affordable", "advanced", "simple", "ultimate"];
+      const suffixes = ["tips", "ideas", "checklist", "examples", "templates", "for beginners", "for pros", "2026", "in 10 minutes"];
+
+      btn.addEventListener("click", () => {
+        const base = seed.value.trim() || "keyword";
+        const who = audience.value.trim();
+        const where = location.value.trim();
+        const intentText = intent.value;
+        const total = Math.min(25, Math.max(5, Number(count.value) || 12));
+
+        const ideas = [];
+        prefixes.forEach((pre) => ideas.push(`${pre} ${base}`));
+        suffixes.forEach((suf) => ideas.push(`${base} ${suf}`));
+        if (who) ideas.push(`${base} for ${who}`);
+        if (where) ideas.push(`${base} in ${where}`);
+        if (intentText) ideas.push(`${base} ${intentText}`);
+
+        result.textContent = unique(ideas).slice(0, total).map((item) => `- ${item}`).join("\n");
+      });
+
+      attachCopy("kwCopy", "kwResult");
+    };
+
+    const metaTagsGenerator = () => {
+      const keyword = byId("mtKeyword");
+      const brand = byId("mtBrand");
+      const page = byId("mtPage");
+      const tone = byId("mtTone");
+      const btn = byId("mtBtn");
+      const result = byId("mtResult");
+      if (!keyword || !brand || !page || !tone || !btn || !result) return;
+
+      btn.addEventListener("click", () => {
+        const key = keyword.value.trim() || "Your Topic";
+        const brandName = brand.value.trim() || "Your Brand";
+        const pageType = page.value || "Guide";
+        const toneText = tone.value || "Professional";
+
+        let title = `${key} ${pageType} | ${brandName}`;
+        if (title.length > 60) title = title.slice(0, 57) + "...";
+        let desc = `Discover ${key} with a ${toneText.toLowerCase()} ${pageType.toLowerCase()} from ${brandName}. Actionable steps, examples, and quick insights included.`;
+        if (desc.length > 155) desc = desc.slice(0, 152) + "...";
+
+        result.textContent = `Meta Title:\n${title}\n\nMeta Description:\n${desc}`;
+      });
+
+      attachCopy("mtCopy", "mtResult");
+    };
+
+    const utmBuilder = () => {
+      const urlInput = byId("utmUrl");
+      const source = byId("utmSource");
+      const medium = byId("utmMedium");
+      const campaign = byId("utmCampaign");
+      const term = byId("utmTerm");
+      const content = byId("utmContent");
+      const btn = byId("utmBtn");
+      const result = byId("utmResult");
+      if (!urlInput || !source || !medium || !campaign || !term || !content || !btn || !result) return;
+
+      btn.addEventListener("click", () => {
+        let urlText = urlInput.value.trim();
+        if (!urlText) {
+          result.textContent = "Enter a valid URL.";
+          return;
+        }
+        if (!/^https?:\/\//i.test(urlText)) urlText = `https://${urlText}`;
+        try {
+          const url = new URL(urlText);
+          const params = url.searchParams;
+          if (source.value.trim()) params.set("utm_source", source.value.trim());
+          if (medium.value.trim()) params.set("utm_medium", medium.value.trim());
+          if (campaign.value.trim()) params.set("utm_campaign", campaign.value.trim());
+          if (term.value.trim()) params.set("utm_term", term.value.trim());
+          if (content.value.trim()) params.set("utm_content", content.value.trim());
+          url.search = params.toString();
+          result.textContent = url.toString();
+        } catch (err) {
+          result.textContent = "URL format not valid.";
+        }
+      });
+
+      attachCopy("utmCopy", "utmResult");
+    };
+
+    const slugGenerator = () => {
+      const input = byId("slugInput");
+      const separator = byId("slugSeparator");
+      const btn = byId("slugBtn");
+      const result = byId("slugResult");
+      if (!input || !separator || !btn || !result) return;
+
+      btn.addEventListener("click", () => {
+        const sep = separator.value || "-";
+        const slug = slugify(input.value || "", sep);
+        result.textContent = slug || "enter-a-title";
+      });
+
+      attachCopy("slugCopy", "slugResult");
+    };
+
+    const serpPreview = () => {
+      const title = byId("serpTitle");
+      const url = byId("serpUrl");
+      const desc = byId("serpDesc");
+      const previewTitle = byId("serpPreviewTitle");
+      const previewUrl = byId("serpPreviewUrl");
+      const previewDesc = byId("serpPreviewDesc");
+      if (!title || !url || !desc || !previewTitle || !previewUrl || !previewDesc) return;
+
+      const update = () => {
+        previewTitle.textContent = (title.value || "Your Page Title").slice(0, 60);
+        previewUrl.textContent = url.value || "www.example.com/page";
+        previewDesc.textContent = (desc.value || "Your meta description will show here.").slice(0, 160);
+      };
+      [title, url, desc].forEach((field) => field.addEventListener("input", update));
+      update();
+    };
+
+    const robotsGenerator = () => {
+      const site = byId("rbSite");
+      const userAgent = byId("rbUserAgent");
+      const allow = byId("rbAllow");
+      const disallow = byId("rbDisallow");
+      const delay = byId("rbDelay");
+      const sitemap = byId("rbSitemap");
+      const btn = byId("rbBtn");
+      const result = byId("rbResult");
+      if (!site || !userAgent || !allow || !disallow || !delay || !sitemap || !btn || !result) return;
+
+      btn.addEventListener("click", () => {
+        const ua = userAgent.value.trim() || "*";
+        const lines = [`User-agent: ${ua}`];
+
+        const allowLines = allow.value.split(/\r?\n/).map((l) => l.trim()).filter(Boolean).map((l) => `Allow: ${l}`);
+        const disallowLines = disallow.value.split(/\r?\n/).map((l) => l.trim()).filter(Boolean).map((l) => `Disallow: ${l}`);
+
+        lines.push(...(allowLines.length ? allowLines : []));
+        lines.push(...(disallowLines.length ? disallowLines : ["Disallow:"]));
+
+        const delayVal = Number(delay.value);
+        if (!Number.isNaN(delayVal) && delayVal > 0) lines.push(`Crawl-delay: ${delayVal}`);
+
+        const sitemapUrl = sitemap.value.trim();
+        if (sitemapUrl) lines.push(`Sitemap: ${sitemapUrl}`);
+        else if (site.value.trim()) lines.push(`Sitemap: ${site.value.trim().replace(/\/$/, "")}/sitemap.xml`);
+
+        result.textContent = lines.join("\n");
+      });
+
+      attachCopy("rbCopy", "rbResult");
+    };
+
+    const sitemapGenerator = () => {
+      const base = byId("smBase");
+      const urls = byId("smUrls");
+      const change = byId("smChange");
+      const priority = byId("smPriority");
+      const lastmod = byId("smLastmod");
+      const btn = byId("smBtn");
+      const result = byId("smResult");
+      if (!base || !urls || !change || !priority || !lastmod || !btn || !result) return;
+
+      btn.addEventListener("click", () => {
+        const baseUrl = base.value.trim().replace(/\/$/, "");
+        const lines = urls.value.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
+        if (!baseUrl && !lines.length) {
+          result.textContent = "Add a base URL and at least one page path.";
+          return;
+        }
+
+        const changefreq = change.value;
+        const pr = priority.value;
+        const date = lastmod.value;
+
+        const items = lines.map((line) => {
+          const loc = line.startsWith("http") ? line : `${baseUrl}/${line.replace(/^\//, "")}`;
+          return `  <url>\n    <loc>${loc}</loc>\n    <changefreq>${changefreq}</changefreq>\n    <priority>${pr}</priority>${date ? `\n    <lastmod>${date}</lastmod>` : ""}\n  </url>`;
+        });
+
+        const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${items.join("\n")}\n</urlset>`;
+        result.textContent = xml;
+      });
+
+      attachCopy("smCopy", "smResult");
+    };
+
+    const qrGenerator = () => {
+      const input = byId("qrInput");
+      const btn = byId("qrBtn");
+      const result = byId("qrResult");
+      if (!input || !btn || !result) return;
+
+      btn.addEventListener("click", () => {
+        const value = encodeURIComponent(input.value.trim());
+        if (!value) {
+          result.textContent = "Enter text or URL first.";
+          return;
+        }
+        result.innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${value}" alt="Generated QR Code">`;
+      });
+    };
+
+    const randomNumberGenerator = () => {
+      const min = byId("rnMin");
+      const max = byId("rnMax");
+      const btn = byId("rnBtn");
+      const result = byId("rnResult");
+      if (!min || !max || !btn || !result) return;
+
+      btn.addEventListener("click", () => {
+        const low = Number(min.value);
+        const high = Number(max.value);
+        if (Number.isNaN(low) || Number.isNaN(high) || low > high) {
+          result.textContent = "Please enter a valid range.";
+          return;
+        }
+        const num = Math.floor(Math.random() * (high - low + 1)) + low;
+        result.textContent = `Random Number: ${num}`;
+      });
+    };
+
+    copyAllLinks();
+    wordCounter();
+    passwordGenerator();
+    usernameGenerator();
+    instaBioGenerator();
+    hashtagGenerator();
+    keywordIdeas();
+    metaTagsGenerator();
+    utmBuilder();
+    slugGenerator();
+    serpPreview();
+    robotsGenerator();
+    sitemapGenerator();
+    qrGenerator();
+    randomNumberGenerator();
+  </script>
+</body>
+</html>
